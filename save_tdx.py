@@ -5,7 +5,6 @@ import json
 import pandas as pd
 import pymongo
 
-from QUANTAXIS.QAFetch import QA_fetch_get_stock_block
 from QUANTAXIS.QAFetch.QATdx import (
     QA_fetch_get_option_day,
     QA_fetch_get_option_min,
@@ -23,13 +22,15 @@ from QUANTAXIS.QAFetch.QATdx import (
     QA_fetch_get_stock_xdxr,
     select_best_ip
 )
-from QUANTAXIS.QAFetch.QATdx import (
-    QA_fetch_get_50etf_option_contract_time_to_market,
-    QA_fetch_get_commodity_option_CU_contract_time_to_market,
-    QA_fetch_get_commodity_option_SR_contract_time_to_market,
-    QA_fetch_get_commodity_option_M_contract_time_to_market,
-    QA_fetch_get_50etf_option_contract_time_to_market,
-)
+
+# from QUANTAXIS.QAFetch import QA_fetch_get_stock_block
+# from QUANTAXIS.QAFetch.QATdx import (
+#     QA_fetch_get_50etf_option_contract_time_to_market,
+#     QA_fetch_get_commodity_option_CU_contract_time_to_market,
+#     QA_fetch_get_commodity_option_SR_contract_time_to_market,
+#     QA_fetch_get_commodity_option_M_contract_time_to_market,
+#     QA_fetch_get_50etf_option_contract_time_to_market,
+# )
 from QUANTAXIS.QAUtil import (
     DATABASE,
     QA_util_get_next_day,
@@ -39,90 +40,97 @@ from QUANTAXIS.QAUtil import (
     trade_date_sse
 )
 
+def now_time():
+    return str(QA_util_get_real_date(str(datetime.date.today() - datetime.timedelta(days=1)), trade_date_sse, -1)) + \
+        ' 17:00:00' if datetime.datetime.now().hour < 15 else str(QA_util_get_real_date(
+            str(datetime.date.today()), trade_date_sse, -1)) + ' 15:00:00'
+
 # dict of database collection configuration
-type_list_d = {
-    'stock_day': {
-        'collection': client.stock_day,
-        'job_id': 'JOB01',
-        'fetch': QA_fetch_get_stock_day
-    },
-    'stock_week': {
-        'collection': client.stock_week,
-        'job_id': 'JOB01',
-        'fetch': QA_fetch_get_stock_day
-    },
-    'stock_month': {
-        'collection': client.stock_month,
-        'job_id': 'JOB01',
-        'fetch': QA_fetch_get_stock_day
-    },
-    'stock_year': {
-        'collection': client.stock_year,
-        'job_id': 'JOB01',
-        'fetch': QA_fetch_get_stock_day
-    },
-    'stock_min': {
-        'collection': client.stock_min,
-        'job_id': 'JOB03',
-        'fetch': QA_fetch_get_stock_min
-    },
-    'index_day': {
-        'collection': client.index_day,
-        'job_id': 'JOB04',
-        'fetch': QA_fetch_get_index_day
-    },
-    'index_min': {
-        'collection': client.index_min,
-        'job_id': 'JOB05',
-        'fetch': QA_fetch_get_index_min
-    },
-    'etf_day': {
-        'collection': client.index_day,
-        'job_id': 'JOB06',
-        'fetch': QA_fetch_get_index_day
-    },
-    'etf_min': {
-        'collection': client.index_min,
-        'job_id': 'JOB07',
-        'fetch': QA_fetch_get_index_min
-    },
-    'future_day': {
-        'collection': client.future_day,
-        'job_id': 'JOB12',
-        'fetch': QA_fetch_get_future_day
-    },
-    'future_day_all': {
-        'collection': client.future_day,
-        'job_id': 'JOB12',
-        'fetch': QA_fetch_get_future_day
-    },
-    'future_min': {
-        'collection': client.future_min,
-        'job_id': 'JOB13',
-        'fetch': QA_fetch_get_future_min
-    },
-    'future_min_all': {
-        'collection': client.future_min,
-        'job_id': 'JOB13',
-        'fetch': QA_fetch_get_future_min
-    },
-    'stock_list': {
-        'collection': client.stock_list,
-        'job_id': 'JOB08'
-    },
-    'index_list': {
-        'collection': client.index_list,
-        'job_id': 'JOB08'
-    },
-    'future_list': {
-        'collection': client.future_list,
-        'job_id': 'JOB08'
-    },
-    'etf_list': {
-        'collection': client.etf_list,
-        'job_id': 'JOB08'
-    },
-}
+def _type_config(client, type_):
+    type_list_d = {
+        'stock_day': {
+            'collection': client.stock_day,
+            'job_id': 'JOB01',
+            'fetch': QA_fetch_get_stock_day
+        },
+        'stock_week': {
+            'collection': client.stock_week,
+            'job_id': 'JOB01',
+            'fetch': QA_fetch_get_stock_day
+        },
+        'stock_month': {
+            'collection': client.stock_month,
+            'job_id': 'JOB01',
+            'fetch': QA_fetch_get_stock_day
+        },
+        'stock_year': {
+            'collection': client.stock_year,
+            'job_id': 'JOB01',
+            'fetch': QA_fetch_get_stock_day
+        },
+        'stock_min': {
+            'collection': client.stock_min,
+            'job_id': 'JOB03',
+            'fetch': QA_fetch_get_stock_min
+        },
+        'index_day': {
+            'collection': client.index_day,
+            'job_id': 'JOB04',
+            'fetch': QA_fetch_get_index_day
+        },
+        'index_min': {
+            'collection': client.index_min,
+            'job_id': 'JOB05',
+            'fetch': QA_fetch_get_index_min
+        },
+        'etf_day': {
+            'collection': client.index_day,
+            'job_id': 'JOB06',
+            'fetch': QA_fetch_get_index_day
+        },
+        'etf_min': {
+            'collection': client.index_min,
+            'job_id': 'JOB07',
+            'fetch': QA_fetch_get_index_min
+        },
+        'future_day': {
+            'collection': client.future_day,
+            'job_id': 'JOB12',
+            'fetch': QA_fetch_get_future_day
+        },
+        'future_day_all': {
+            'collection': client.future_day,
+            'job_id': 'JOB12',
+            'fetch': QA_fetch_get_future_day
+        },
+        'future_min': {
+            'collection': client.future_min,
+            'job_id': 'JOB13',
+            'fetch': QA_fetch_get_future_min
+        },
+        'future_min_all': {
+            'collection': client.future_min,
+            'job_id': 'JOB13',
+            'fetch': QA_fetch_get_future_min
+        },
+        'stock_list': {
+            'collection': client.stock_list,
+            'job_id': 'JOB08'
+        },
+        'index_list': {
+            'collection': client.index_list,
+            'job_id': 'JOB08'
+        },
+        'future_list': {
+            'collection': client.future_list,
+            'job_id': 'JOB08'
+        },
+        'etf_list': {
+            'collection': client.etf_list,
+            'job_id': 'JOB08'
+        },
+    }
+    return type_list_d[type_]
 
 # dict of database query string
 db_index_d = {
@@ -188,8 +196,9 @@ def QA_SU_save_list(
     standard_list = ['stock_list', 'index_list', 'future_list', 'etf_list']
     type_ = str(type_)
     if type_ in standard_list:
-        coll = type_list_d[type_]['collection']
-        job_id = type_list_d[type_]['job_id']
+        config = _type_config(client=client, type_=type_)
+        coll = config['collection']
+        job_id = config['job_id']
         try:
             QA_util_log_info(
                 '##{} Now Saving {} ===='.format(job_id,
@@ -236,22 +245,23 @@ def QA_SU_save_short_freq(
 
     type_ = str(type_)
     # make sure type_ is correct, if min_list is empty, add '1min' to to it
-    if type_ in type_list_d.keys():
-        lst, frequence = get_list(type_)
-        if 'min' in frequence:
-            db_index = db_index_d['short_freq']
-            min_list = min_list if len(min_list) else ['1min']
-        else:
-            db_index = db_index_d['long_freq']
+    # if type_ in type_list_d.keys():
+    lst, frequence = get_list(type_)
+    if frequence == 'min':
+        db_index = db_index_d['short_freq']
+        min_list = min_list if len(min_list) else ['1min']
     else:
-        QA_util_log_info('ERROR CODE \n ', ui_log)
-        return None
+        db_index = db_index_d['long_freq']
+    # else:
+    #     QA_util_log_info('ERROR CODE \n ', ui_log)
+    #     return None
     if lst is None:
         QA_util_log_info('ERROR CODE \n ', ui_log)
         return None
 
-    coll = type_list_d[type_]['collection']
-    job_id = type_list_d[type_]['job_id']
+    config = _type_config(client=client, type_=type_)
+    coll = config['collection']
+    job_id = config['job_id']
     coll.create_index(db_index)
     err = []
 
@@ -286,7 +296,7 @@ def QA_SU_save_short_freq(
                         ui_log=ui_log
                     )
                     if start_time != end_time:
-                        __data = type_list_d[type_]['fetch'](
+                        __data = config['fetch'](
                             str(code),
                             start_time,
                             end_time,
@@ -352,24 +362,25 @@ def QA_SU_save_long_freq(
     '''
     type_ = str(type_)
                           # make sure type_ is correct, if min_list is empty, add '1min' to to it
-    if type_ in type_list_d.keys():
-        lst, frequence = get_list(type_)
+    # if type_ in type_list_d.keys():
+    lst, frequence = get_list(type_)
 
-        if lst is None:
-            QA_util_log_info('ERROR CODE \n ', ui_log)
-            return None
-
-        # if 'min' in frequence:
-        #     db_index = db_index_d['short_freq']
-        #     min_list = min_list if len(min_list) else ['1min']
-        # else:
-        #     db_index = db_index_d['long_freq']
-    else:
+    if lst is None:
         QA_util_log_info('ERROR CODE \n ', ui_log)
         return None
 
-    coll = type_list_d[type_]['collection']
-    job_id = type_list_d[type_]['job_id']
+    if 'min' in frequence:
+        db_index = db_index_d['short_freq']
+        min_list = min_list if len(min_list) else ['1min']
+    else:
+        db_index = db_index_d['long_freq']
+    # else:
+    #     QA_util_log_info('ERROR CODE \n ', ui_log)
+    #     return None
+
+    config = _type_config(client=client, type_=type_)
+    coll = config['collection']
+    job_id = config['job_id']
 
     coll.create_index(db_index)
     err = []
@@ -412,7 +423,7 @@ def QA_SU_save_long_freq(
                 ) if start_date != beginning_date else beginning_date
                 coll.insert_many(
                     QA_util_to_json_from_pandas(
-                        type_list_d[type_]['fetch'](
+                        config['fetch'](
                             code=str(code),
                             start_date=start_date,
                             end_date=end_date,

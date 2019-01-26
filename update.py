@@ -1,20 +1,18 @@
 #!/usr/local/bin/python
 from QUANTAXIS.QASU.main import (
-    QA_SU_save_long_freq,
-    QA_SU_save_short_freq,
-    QA_SU_save_list,
     QA_SU_save_stock_info,
     QA_SU_save_stock_xdxr,
     QA_SU_save_stock_block,
     QA_SU_save_financialfiles
 )
+from main import QA_SU_save_list, QA_SU_save_long_freq, QA_SU_save_short_freq
 
 update_list = []
 min_freq = []
 
 try:
     with open('update_list.txt', 'r') as f:
-        update_list.extend([line.rstrip('\n') for line in f if line[0] != '#'])
+        update_list.extend([line.rstrip('\n') for line in f if line[0] != '#' and len(line.rstrip('\n'))])
 except:
     pass
 
@@ -47,9 +45,10 @@ def info_update(update_list):
 update_list = info_update(update_list)
 
 for update in update_list:
+    print('updating: {}'.format(update))
     if 'min' in update:
-        QA_SU_save_short_freq(engine='tdx', type_=update, min_list=min_freq)
+        QA_SU_save_short_freq(engine='custom', type_=update, min_list=min_freq)
     elif 'list' in update:
-        QA_SU_save_list(engine='tdx', type_=update)
+        QA_SU_save_list(engine='custom', type_=update)
     else:
-        QA_SU_save_long_freq(engine='tdx', type_=update)
+        QA_SU_save_long_freq(engine='custom', type_=update)
