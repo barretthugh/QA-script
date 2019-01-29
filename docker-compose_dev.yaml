@@ -13,7 +13,7 @@ services:
         restart: always
 
     qacron:
-        image: barretthugh/qa-cron
+        image: barretthugh/qa-custom-cron
         environment:
             - MONGODB=mgdb
         restart: always

@@ -47,6 +47,7 @@ def now_time():
 
 # dict of database collection configuration
 def _type_config(client, type_):
+
     type_list_d = {
         'stock_day': {
             'collection': client.stock_day,
@@ -134,19 +135,8 @@ def _type_config(client, type_):
 
 # dict of database query string
 db_index_d = {
-    'short_freq': [
-        ('code',
-         pymongo.ASCENDING),
-        ('time_stamp',
-         pymongo.ASCENDING),
-        ('date_stamp',
-         pymongo.ASCENDING)
-    ],
-    'long_freq':
-    [("code",
-      pymongo.ASCENDING),
-     ("date_stamp",
-      pymongo.ASCENDING)]
+    'short_freq': [('code', pymongo.ASCENDING), ('time_stamp', pymongo.ASCENDING), ('date_stamp', pymongo.ASCENDING)],
+    'long_freq': [("code", pymongo.ASCENDING), ("date_stamp", pymongo.ASCENDING)]
 }
 
 # list of freq, not used yet

@@ -1,10 +1,6 @@
 #!/usr/local/bin/python
-from QUANTAXIS.QASU.main import (
-    QA_SU_save_stock_info,
-    QA_SU_save_stock_xdxr,
-    QA_SU_save_stock_block,
-    QA_SU_save_financialfiles
-)
+from QUANTAXIS.QASU.main import QA_SU_save_stock_info, QA_SU_save_stock_xdxr, QA_SU_save_stock_block, QA_SU_save_financialfiles
+
 from main import QA_SU_save_list, QA_SU_save_long_freq, QA_SU_save_short_freq
 
 update_list = []
