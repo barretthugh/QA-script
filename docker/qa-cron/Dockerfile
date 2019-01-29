@@ -11,7 +11,7 @@ RUN apt-get update \
 	&& mkdir /update \
 	&& cd update \
 	&& wget https://raw.githubusercontent.com/barretthugh/QA-script/master/update_list.txt \
-	&& wget https://raw.githubusercontent.com/barretthugh/QA-script/master/update.py
+	&& wget https://raw.githubusercontent.com/barretthugh/QA-script/master/update.py \
 	&& chmod +x /update/update.py \
 	&& crontab /etc/cron.d/daily_update \
 	&& chmod +x /entrypoint.sh
