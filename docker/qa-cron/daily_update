@@ -1,0 +1,1 @@
+00 19 * * mon-fri root /home/QA-script/update.py > /proc/1/fd/1 2>/proc/1/fd/2
