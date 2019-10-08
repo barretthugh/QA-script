@@ -7,7 +7,7 @@ update_list = []
 min_freq = []
 
 try:
-    with open('update_list.txt', 'r') as f:
+    with open('/home/QA-script/update_list.txt', 'r') as f:
         update_list.extend([line.rstrip('\n') for line in f if line[0] != '#' and len(line.rstrip('\n'))])
 except:
     pass
@@ -22,23 +22,26 @@ else:
 
 # update basic info
 def info_update(update_list):
+    remove_list = []
     for update in update_list:
         if update == 'stock_info':
             QA_SU_save_stock_info('tdx')
-            update_list.remove(update)
+            remove_list.append(update)
         elif update == 'stock_xdxr':
             QA_SU_save_stock_xdxr('tdx')
-            update_list.remove(update)
+            remove_list.append(update)
         elif update == 'stock_block':
             QA_SU_save_stock_block('tdx')
-            update_list.remove(update)
+            remove_list.append(update)
         elif update == 'save_financialfiles':
             QA_SU_save_financialfiles()
-            update_list.remove(update)
-    return update_list
+            remove_list.append(update)
+    return update_list, remove_list
 
-
-update_list = info_update(update_list)
+update_list, remove_list = info_update(update_list)
+if len(remove_list):
+    for update in remove_list:
+        update_list.remove(update)
 
 for update in update_list:
     print('updating: {}'.format(update))

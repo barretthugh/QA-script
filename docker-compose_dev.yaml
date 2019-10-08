@@ -13,9 +13,12 @@ services:
         restart: always
 
     qacron:
-        image: barretthugh/qa-custom-cron
+        build: ./docker/qa-cron/.
+        image: custom-cron
         environment:
             - MONGODB=mgdb
+        volumes:
+            - ./:/update
         restart: always
 
     qaweb:

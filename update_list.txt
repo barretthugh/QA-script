@@ -3,13 +3,13 @@
 # uncomment to enable the update item
 # eg. stock_min, @min_freq: 5min, 60min
 
+stock_block
+stock_xdxr
+stock_info
 stock_list
 index_list
 etf_list
 future_list
-stock_xdxr
-stock_block
-stock_info
 stock_day
 index_day
 etf_day
